@@ -20,10 +20,10 @@ class ForecastViewController : UIViewController {
     var currentDay = [JSON]()
     var nextDays = [JSON]()
     
-    var weatherID = [Int]()
-    var temp = [Double]()
-    var pressure = [Double]()
-    var windSpeed = [Double]()
+//    var weatherID = [Int]()
+//    var temp = [Double]()
+//    var pressure = [Double]()
+//    var windSpeed = [Double]()
     
     @IBOutlet weak var tempLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
@@ -80,30 +80,36 @@ class ForecastViewController : UIViewController {
     
     func prepareTableViewData() {
         
+        var weatherID : Int = 0
+        var temp : Double = 0.0
+        var pressure : Double = 0.0
+        var windSpeed : Double = 0.0
+        var dayName : String = ""
+        var weatherData = [DayWeatherData]()
+        
         for item in currentDay {
             if item["dt_txt"].description.prefix(13) == (getDate(seconds: 0) + " 12"){
                 temp.append(item["main"]["temp"].double!)
                 pressure.append(item["main"]["pressure"].double!)
                 windSpeed.append(item["wind"]["speed"].double!)
-                //weatherID.append(item["weather"]["id"].int!)
+                weatherID.append(item["weather"].arrayValue[0]["id"].int!)
                 continue
             } else {
                 temp.append(item["main"]["temp"].double!)
                 pressure.append(item["main"]["pressure"].double!)
                 windSpeed.append(item["wind"]["speed"].double!)
-                //weatherID.append(item["weather"]["id"].int!)
+                weatherID.append(item["weather"].arrayValue[0]["id"].int!)
                 continue
             }
         }
         //86400
         for i in 1...4 {
                 for item in nextDays {
-                    print(item["dt_txt"].description.prefix(13))
                     if item["dt_txt"].description.prefix(13) == (getDate(seconds: (i*86400)) + " 12"){
                         temp.append(item["main"]["temp"].double!)
                         pressure.append(item["main"]["pressure"].double!)
                         windSpeed.append(item["wind"]["speed"].double!)
-                        //weatherID.append(item["weather"]["id"].int!)
+                        weatherID.append(item["weather"].arrayValue[0]["id"].int!)
                 }
             }
         }
@@ -115,11 +121,38 @@ class ForecastViewController : UIViewController {
             print(pressure.count)
             print(windSpeed.count)
             for i in 0..<temp.count {
-                print(temp[i])
-                print(pressure[i])
-                print(windSpeed[i])
-                //print(weatherID[i])
+                print("\nNOWY DZIEN")
+                print("Temperatura: ", temp[i])
+                print("Ciśnienie: ",pressure[i])
+                print("Wiatr: ",windSpeed[i])
+                print("IDphoto: ",weatherID[i])
             }
+            
+//            for item in nextDays {
+////                var weather = item["weather"].arrayValue
+////                var id = weather[0]["id"].int!
+//                var weather = item["weather"].arrayValue[0]["id"].int!
+//                print(weather)
+////                for item2 in weather! {
+////                    print(item2)
+////                }
+//            }
         }
     
+}
+
+struct DayWeatherData {
+    var weatherID : Int
+    var temp : Double
+    var pressure : Double
+    var windSpeed : Double
+    var dayName : String
+    
+    init(weatherID: Int, temp: Double, pressure: Double, windSpeed: Double, dayName: String) {
+        self.weatherID = weatherID
+        self.temp = temp
+        self.pressure = pressure
+        self.windSpeed = windSpeed
+        self.dayName = dayName
+    }
 }
